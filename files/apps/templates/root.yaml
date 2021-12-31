@@ -3,6 +3,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: root
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -11,7 +12,7 @@ spec:
     namespace: argocd
   project: default
   source:
-    path: roles/argocd/files/apps
+    path: files/apps
     repoURL: https://github.com/jisequilla/ansible-argocd-role.git
     targetRevision: HEAD
   syncPolicy:

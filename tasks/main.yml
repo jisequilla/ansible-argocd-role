@@ -1,28 +1,22 @@
 ---
 # tasks file for argocd
 
-- name: create namespace
-  kubernetes.core.k8s:
-    name: argocd
-    api_version: v1
-    kind: namespace
-    state: present
-
 - name: add helm argo repo
-  kubernetes.core.helm:
+  kubernetes.core.helm_repository:
     name: argo
     repo_url: "https://argoproj.github.io/argo-helm"
 
 - name: install argocd
   kubernetes.core.helm:
-    name: argocd
+    name: argo-cd
     release_namespace: argocd
-    chart_ref: "{{ lookup('file', 'charts/argo-cd/Chart.yaml') | from_yaml }}"
-    values_files: "{{ lookup('file', 'charts/argo-cd/values.yaml') | from_yaml }}"
-
+    chart_ref: "{{ role_path }}/files/charts/argo-cd/"
+    create_namespace: true
+    release_state: present
+   
 - name: create apps templates
   kubernetes.core.helm_template:
-    chart_ref: apps
+    chart_ref: "{{ role_path }}/files/apps/"
   register: result
 
 - name: write templates to file
@@ -30,18 +24,25 @@
     dest: myapps.yaml
     content: "{{ result.stdout }}"
 
+- name: retrive myapps.yaml
+  fetch:
+    src: myapps.yaml
+    dest: ../outputs/myapps.yaml
+
 - name: Create apps
   kubernetes.core.k8s:
     state: present
     src: myapps.yaml
+    namespace: argocd
 
 - name: Delete from helm
   kubernetes.core.k8s:
-    apiVersion: v1
-    state: absent
+    name: sh.helm.release.v1.argo-cd.v1
     kind: Secret
-    metadata:
-      namespace: argocd
-      labels:
-        owner: helm
-        name: argo-cd
+    state: absent
+    namespace: argocd
+    definition:
+      metadata:
+        labels:
+          owner: helm
+          name: argo-cd
