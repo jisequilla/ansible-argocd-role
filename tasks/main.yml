@@ -1,0 +1,23 @@
+---
+# tasks file for argocd
+
+- name: create namespace
+  kubernetes.core.k8s:
+    name: argocd
+    api_version: v1
+    kind: namespace
+    state: present
+
+- name: add helm argo repo
+  kubernetes.core.helm:
+    name: argo
+    repo_url: "https://argoproj.github.io/argo-helm"
+
+- name: install argocd
+  kubernetes.core.helm:
+    name: argocd
+    release_namespace: argocd
+    chart_ref: "{{ lookup('file', 'charts/argo-cd/Chart.yaml') | from_yaml }}"
+    values_files: "{{ lookup('file', 'charts/argo-cd/values.yaml') | from_yaml }}"
+
+- name: 

@@ -1,0 +1,10 @@
+---
+extends: default
+# For all rules
+ignore: |
+   meta/main.yml
+
+rules:
+   truthy:
+      allowed-values: ['true', 'false', 'yes', 'no']
+      check-keys: true
