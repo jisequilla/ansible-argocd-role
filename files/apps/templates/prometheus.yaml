@@ -2,18 +2,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: root
+  name: prometheus
+  namespace: default
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: default
   project: default
   source:
-    path: roles/argocd/files/apps
-    repoURL: https://github.com/jisequilla/ansible-argocd-role.git
-    targetRevision: HEAD
+    chart: prometheus
+    helm:
+      values: |
+        pushgateway:
+          enabled: false
+    repoURL: https://prometheus-community.github.io/helm-charts
+    targetRevision: 13.0.2
   syncPolicy:
     automated:
       prune: true

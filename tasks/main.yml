@@ -20,4 +20,28 @@
     chart_ref: "{{ lookup('file', 'charts/argo-cd/Chart.yaml') | from_yaml }}"
     values_files: "{{ lookup('file', 'charts/argo-cd/values.yaml') | from_yaml }}"
 
-- name: 
+- name: create apps templates
+  kubernetes.core.helm_template:
+    chart_ref: apps
+  register: result
+
+- name: write templates to file
+  copy:
+    dest: myapps.yaml
+    content: "{{ result.stdout }}"
+
+- name: Create apps
+  kubernetes.core.k8s:
+    state: present
+    src: myapps.yaml
+
+- name: Delete from helm
+  kubernetes.core.k8s:
+    apiVersion: v1
+    state: absent
+    kind: Secret
+    metadata:
+      namespace: argocd
+      labels:
+        owner: helm
+        name: argo-cd
