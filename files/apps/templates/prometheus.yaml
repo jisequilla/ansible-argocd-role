@@ -1,25 +1,49 @@
 ---
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
+apiVersion: argoproj.io/v1alpha1 
+kind: Application 
+metadata: 
   name: prometheus
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
-spec:
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: default
-  project: default
-  source:
-    chart: prometheus
-    helm:
-      values: |
-        pushgateway:
-          enabled: false
-    repoURL: https://prometheus-community.github.io/helm-charts
-    targetRevision: 13.0.2
+spec: 
+  destination: 
+    name: '' 
+    namespace: default 
+    server: 'https://kubernetes.default.svc' 
+  source: 
+    path: '' 
+    repoURL: 'https://prometheus-community.github.io/helm-charts' 
+    targetRevision: 14.11.1 
+    chart: prometheus 
+    helm: 
+      values: |- 
+        alertmanager:
+          securityContext:
+            runAsNonRoot: false
+          extraInitContainers:
+          - name: "volume-mount-permission"
+            image: "busybox"
+            command: ["/bin/chown", "-R", "65534", "/data"]
+            volumeMounts:
+              - name: "storage-volume"
+                mountPath: "/data"
+            securityContext:
+              runAsUser: 0
+        server:
+          securityContext:
+            runAsNonRoot: false
+          extraInitContainers:
+          - name: "volume-mount-permission"
+            image: "busybox"
+            command: ["/bin/chown", "-R", "65534", "/data"]
+            volumeMounts:
+              - name: "storage-volume"
+                mountPath: "/data"
+            securityContext:
+              runAsUser: 0
+  project: default 
   syncPolicy:
     automated:
       prune: true
-      selfHeal: false
+      selfHeal: true
