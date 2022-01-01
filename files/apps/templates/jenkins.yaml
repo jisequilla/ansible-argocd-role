@@ -12,7 +12,7 @@ spec:
     namespace: jenkins
   project: default
   source:
-    path: operator/helm-charts
+    path: operator/helm-carts
     repoURL: https://github.com/jisequilla/k8s-jenkins-operator-conf.git
     targetRevision: HEAD
   syncPolicy:
