@@ -14,7 +14,7 @@ spec:
   source:
     path: files/apps
     repoURL: https://github.com/jisequilla/ansible-argocd-role.git
-    targetRevision: HEAD
+    targetRevision: develop
   syncPolicy:
     automated:
       prune: true
