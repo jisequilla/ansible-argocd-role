@@ -12,6 +12,7 @@ spec:
     namespace: sock-shop
   project: default
   source:
+    path: manifest
     repoURL: https://github.com/jisequilla/sock-shop-conf.git
     targetRevision: HEAD
   syncPolicy:
