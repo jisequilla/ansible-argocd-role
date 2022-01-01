@@ -14,7 +14,7 @@ spec:
   source:
     path: no-operator
     repoURL: https://github.com/jisequilla/k8s-jenkins-operator-conf.git
-    targetRevision: HEAD
+    targetRevision: feature/no-operator
   syncPolicy:
     automated:
       prune: true
